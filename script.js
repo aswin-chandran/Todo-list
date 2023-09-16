@@ -1,50 +1,85 @@
-function change() {
-  console.log("checked");
-  //step 1
-  var xhttp = new XMLHttpRequest();
-  var txt = document.getElementById("txt");
+document.getElementById('logout').addEventListener('click', function () 
+{
+    window.location.href = 'index.html';
+});
+
+let completedTasks = 0;
+
+document.getElementById('todo-list').addEventListener('click', function () 
+{
+    
+    document.getElementById('todo-list-container').style.display = 'block';
 
 
+    fetch('https://jsonplaceholder.typicode.com/todos')
+        .then(response => response.json())
+        .then(data => 
+            {
+            const todoListBody = document.getElementById('todo-list-body');
+            todoListBody.innerHTML = '';
+            data.forEach(todo => 
+                {
+                const row = document.createElement('tr');
+                const no = document.createElement('td')
+                const titleColumn = document.createElement('td');
+                const completedColumn = document.createElement('td');
+
+                const completedCheckbox = document.createElement('input');
+                completedCheckbox.type = 'checkbox';
+                completedCheckbox.checked = todo.completed;
+                if (todo.completed) 
+                {
+                    completedCheckbox.disabled = true;
+                }
+                completedCheckbox.addEventListener('change', function () 
+                {
+                    todo.completed = this.checked;
+                    if (this.checked) 
+                    
+                    {
+                        completedTasks++;
+                    } else 
+                    {
+                        completedTasks--;
+                    }
+
+                    checkCompletedTasks(completedTasks).then(congratulateUser);
+                });
+
+                
+                titleColumn.textContent = todo.title;
+                no.textContent= todo.id;
+                completedColumn.appendChild(completedCheckbox);
+                row.appendChild(no);
+                row.appendChild(titleColumn);
+                row.appendChild(completedColumn);
+                todoListBody.appendChild(row);
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+});
 
 
-  //step 4
-
- 
-    xhttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        let output = JSON.parse(this.responseText);
-        let val = "";
-     
-       
-
-        for (let x = 0; x < output.length; x++) {
-          var y = document.createElement("INPUT");
-          y.setAttribute("type", "checkbox");
-        
-          
-          val += `<table >
-          <br>
-          <tr >
-          
-          <td>${output[x].id} </td>
-         
-         
-          <td>${output[x].title} </td>
-          <td><input type="checkbox"></td>
-       
-       
-        
-          </tr>
-          </table>`;
-        
-          txt.innerHTML = val;
+function checkCompletedTasks(completedTasks) 
+{
+    return new Promise((resolve) => 
+    {
+        if (completedTasks === 5) 
+        {
+            resolve(true);
+        } else 
+        {
+            resolve(false);
         }
-      }
-    };
- 
-  //step 2
-  xhttp.open("GET", "https://jsonplaceholder.typicode.com/todos", true);
+    });
+}
 
-  //step 3
-  xhttp.send();
+
+function congratulateUser(isCompleted) 
+{
+    if (isCompleted)
+    {
+    
+        alert('Congrats Task Completed');
+    }
 }
