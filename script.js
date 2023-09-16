@@ -1,14 +1,10 @@
-document.getElementById('logout').addEventListener('click', function () 
-{
-    window.location.href = 'index.html';
-});
+
 
 let completedTasks = 0;
 
 document.getElementById('todo-list').addEventListener('click', function () 
 {
-    
-    document.getElementById('todo-list-container').style.display = 'block';
+  
 
 
     fetch('https://jsonplaceholder.typicode.com/todos')
